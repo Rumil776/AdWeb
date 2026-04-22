@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ImpactPro Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0e0d0b;
+    --orange: #e85d04;
+    --orange-dark: #c44d00;
+    --orange-light: #fff3eb;
+    --steel: #2b2d35;
+    --mid: #5a5c63;
+    --light: #f5f4f1;
+    --border: #dddbd5;
+    --white: #ffffff;
+    --success: #1a7a4a;
+    --badge: #fde8d8;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+    color: var(--black);
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--black);
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 64px;
+  }
+  .logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 26px; font-weight: 800; letter-spacing: 1px;
+    color: var(--white); cursor: pointer; user-select: none;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo span { color: var(--orange); }
+  /* ── LOGO IMAGE ──
+     Replace src="" with your logo image path or URL.
+     Recommended size: height 36px, any width (auto).
+     Remove the <span> text next to it if you want image-only logo. */
+  .logo-img {
+    height: 36px;
+    width: auto;
+    object-fit: contain;
+    display: inline-block;
+  }
+  .nav-links { display: flex; gap: 8px; }
+  .nav-link {
+    background: none; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    font-weight: 500; color: #aaa; padding: 8px 16px;
+    border-radius: 6px; transition: all 0.2s;
+  }
+  .nav-link:hover, .nav-link.active { color: var(--white); background: rgba(255,255,255,0.08); }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .login-btn {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    cursor: pointer; color: var(--white); padding: 8px 18px; border-radius: 6px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+    transition: all 0.2s;
+  }
+  .login-btn:hover { background: rgba(255,255,255,0.2); }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ===== HOME ===== */
+  .hero {
+    background: var(--black);
+    padding: 100px 40px 80px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+  }
+  .hero-tag {
+    display: inline-block; background: var(--orange); color: var(--white);
+    font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    padding: 6px 14px; border-radius: 4px; margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 72px; font-weight: 800; line-height: 1;
+    color: var(--white); margin-bottom: 20px; letter-spacing: -1px;
+  }
+  .hero h1 em { color: var(--orange); font-style: normal; }
+  .hero p { font-size: 17px; color: #999; line-height: 1.7; margin-bottom: 32px; max-width: 480px; }
+  .hero-btns { display: flex; gap: 12px; }
+  .btn-primary {
+    background: var(--orange); color: var(--white); border: none;
+    padding: 14px 32px; border-radius: 8px; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+  }
+  .btn-primary:hover { background: var(--orange-dark); }
+  .btn-outline {
+    background: transparent; color: var(--white);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 14px 32px; border-radius: 8px; font-size: 15px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+  }
+  .btn-outline:hover { border-color: var(--white); }
+  .hero-visual {
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .tool-showcase {
+    width: 340px; height: 340px; background: linear-gradient(135deg, #1a1c24, #2b2d35);
+    border-radius: 24px; display: flex; align-items: center; justify-content: center;
+    font-size: 120px; border: 1px solid rgba(255,255,255,0.08);
+    position: relative; overflow: hidden;
+  }
+  .tool-showcase::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 70% 30%, rgba(232,93,4,0.15), transparent 60%);
+  }
+  /* ── HERO SHOWCASE IMAGE ──
+     Replace src="" with your hero/banner image path or URL.
+     Recommended size: 340x340px or square crop.
+     The image fills the dark rounded box in the hero section. */
+  .tool-showcase-img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 24px;
+    display: block;
+
+    position: absolute; display: flex; flex-direction: column; gap: 8px;
+    right: -20px; top: 50%; transform: translateY(-50%);
+  }
+  .tool-badge {
+    background: var(--orange); color: var(--white);
+    padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .stats-bar {
+    background: var(--orange); padding: 24px 40px;
+    display: grid; grid-template-columns: repeat(4, 1fr); text-align: center;
+  }
+  .stat-item { color: var(--white); }
+  .stat-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 40px; font-weight: 800; display: block;
+  }
+  .stat-label { font-size: 13px; opacity: 0.85; font-weight: 500; }
+  .stat-divider { border-right: 1px solid rgba(255,255,255,0.3); }
+
+  .home-section { padding: 80px 40px; }
+  .section-header { margin-bottom: 48px; }
+  .section-tag {
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--orange); margin-bottom: 12px; display: block;
+  }
+  .section-header h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 44px; font-weight: 800; letter-spacing: -0.5px;
+  }
+
+  .featured-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .product-card {
+    border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+    transition: all 0.25s; cursor: pointer; background: var(--white);
+  }
+  .product-card:hover { border-color: var(--orange); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(232,93,4,0.12); }
+  .product-img {
+    background: var(--light); height: 200px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 72px; position: relative;
+  }
+  /* ── PRODUCT CARD IMAGE ──
+     Each product card has an <img> inside .product-img.
+     Set src in the PRODUCTS array (see JavaScript) using the `img` property.
+     Recommended size: 400x200px or 2:1 landscape crop. */
+  .product-card-img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  
+    position: absolute; top: 12px; left: 12px;
+    background: var(--orange); color: var(--white);
+    font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 4px;
+  }
+  .product-info { padding: 20px; }
+  .product-brand { font-size: 11px; font-weight: 700; color: var(--mid); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .product-name { font-size: 16px; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
+  .product-rating { display: flex; align-items: center; gap: 6px; margin-bottom: 12px; }
+  .stars { color: #f5a623; font-size: 13px; }
+  .review-count { font-size: 12px; color: var(--mid); }
+  .product-footer { display: flex; align-items: center; justify-content: space-between; }
+  .product-price { font-size: 22px; font-weight: 700; color: var(--black); }
+  .product-price .old { font-size: 14px; color: var(--mid); text-decoration: line-through; font-weight: 400; margin-left: 6px; }
+  .shopee-btn {
+    background: #ee4d2d; color: var(--white); border: none;
+    padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+  }
+  .shopee-btn:hover { background: #c73e20; }
+
+  .why-section {
+    background: var(--black); padding: 80px 40px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+  }
+  .why-left .section-tag { color: var(--orange); }
+  .why-left h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 52px; font-weight: 800; color: var(--white);
+    line-height: 1; margin-bottom: 20px; letter-spacing: -0.5px;
+  }
+  .why-left h2 em { color: var(--orange); font-style: normal; }
+  .why-left p { font-size: 16px; color: #888; line-height: 1.8; margin-bottom: 32px; }
+  .why-stat {
+    display: flex; gap: 40px;
+  }
+  .why-stat-item { }
+  .why-stat-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 48px; font-weight: 800; color: var(--orange); line-height: 1;
+  }
+  .why-stat-label { font-size: 13px; color: #666; margin-top: 4px; }
+  .why-right {
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .why-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px; padding: 28px 32px;
+    display: flex; align-items: flex-start; gap: 20px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .why-card:hover { border-color: var(--orange); background: rgba(232,93,4,0.06); }
+  .why-card-icon {
+    width: 48px; height: 48px; border-radius: 10px;
+    background: rgba(232,93,4,0.15); display: flex; align-items: center;
+    justify-content: center; font-size: 22px; flex-shrink: 0;
+  }
+  .why-card-body h4 { font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+  .why-card-body p { font-size: 14px; color: #777; line-height: 1.6; }
+
+  .banner {
+    background: var(--black); padding: 80px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .banner-text h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 48px; font-weight: 800; color: var(--white); margin-bottom: 12px;
+  }
+  .banner-text p { color: #999; font-size: 16px; }
+
+  /* ===== PRODUCTS PAGE ===== */
+  .products-header { background: var(--black); padding: 60px 40px; }
+  .products-header h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 56px; font-weight: 800; color: var(--white);
+  }
+  .products-header p { color: #888; font-size: 16px; margin-top: 8px; }
+
+  .products-layout { padding: 40px; }
+
+  .products-main { }
+  .products-toolbar {
+    display: flex; align-items: center;
+    margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+  }
+  .products-count { font-size: 14px; color: var(--mid); }
+  .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+  /* ===== ABOUT ===== */
+  .about-hero {
+    background: var(--black); padding: 100px 40px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+  }
+  .about-hero h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 64px; font-weight: 800; color: var(--white); line-height: 1;
+    margin-bottom: 24px;
+  }
+  .about-hero h1 em { color: var(--orange); font-style: normal; }
+  .about-hero p { color: #999; font-size: 17px; line-height: 1.8; }
+  .about-visual {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  }
+  .about-card {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; padding: 24px; text-align: center;
+  }
+  .about-card .num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 48px; font-weight: 800; color: var(--orange);
+  }
+  .about-card .label { font-size: 13px; color: #888; margin-top: 4px; }
+
+  .about-section { padding: 80px 40px; }
+  .about-section.alt { background: var(--light); }
+  .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .team-card {
+    border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+    text-align: center; background: var(--white);
+  }
+  .team-photo {
+    height: 200px; background: var(--light);
+    display: flex; align-items: center; justify-content: center; font-size: 72px;
+  }
+  .team-info { padding: 20px; }
+  .team-info h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .team-info .role { font-size: 13px; color: var(--orange); font-weight: 600; margin-bottom: 8px; }
+  .team-info p { font-size: 13px; color: var(--mid); line-height: 1.6; }
+
+  .values-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .value-card {
+    padding: 32px; border-radius: 12px; border: 1px solid var(--border);
+    display: flex; gap: 20px; align-items: flex-start;
+  }
+  .value-icon {
+    width: 48px; height: 48px; background: var(--orange-light); border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;
+  }
+  .value-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+  .value-card p { font-size: 14px; color: var(--mid); line-height: 1.7; }
+
+  /* ===== LOGIN ===== */
+  .login-page {
+    min-height: calc(100vh - 64px);
+    background: var(--light);
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px;
+  }
+  .login-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 0; max-width: 900px; width: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,0.12); }
+  .login-left { background: var(--black); padding: 60px 48px; display: flex; flex-direction: column; justify-content: center; }
+  .login-left .logo { font-size: 32px; margin-bottom: 40px; }
+  .login-left h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 44px; font-weight: 800; color: var(--white); line-height: 1.1; margin-bottom: 20px;
+  }
+  .login-left h2 em { color: var(--orange); font-style: normal; }
+  .login-left p { color: #888; font-size: 15px; line-height: 1.7; margin-bottom: 32px; }
+  .login-perk { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; color: #ccc; font-size: 14px; }
+  .perk-dot { width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0; }
+
+  .login-right { background: var(--white); padding: 60px 48px; }
+  .login-tabs { display: flex; gap: 4px; margin-bottom: 32px; background: var(--light); padding: 4px; border-radius: 8px; }
+  .login-tab {
+    flex: 1; padding: 10px; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    border-radius: 6px; transition: all 0.2s; background: none; color: var(--mid);
+  }
+  .login-tab.active { background: var(--white); color: var(--black); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+  .login-form { display: none; }
+  .login-form.active { display: flex; flex-direction: column; gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group label { font-size: 13px; font-weight: 600; color: var(--steel); }
+  .form-input {
+    border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px;
+    font-size: 15px; font-family: 'DM Sans', sans-serif; color: var(--black);
+    transition: border-color 0.2s; outline: none;
+  }
+  .form-input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(232,93,4,0.1); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .forgot { font-size: 13px; color: var(--orange); text-align: right; cursor: pointer; font-weight: 500; }
+  .form-submit {
+    background: var(--orange); color: var(--white); border: none;
+    padding: 14px; border-radius: 8px; font-size: 16px; font-weight: 700;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.2s; margin-top: 4px;
+  }
+  .form-submit:hover { background: var(--orange-dark); }
+  .form-divider {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 13px; color: var(--mid); margin: 4px 0;
+  }
+  .form-divider::before, .form-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .social-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .social-btn {
+    border: 1px solid var(--border); border-radius: 8px; padding: 11px;
+    font-size: 13px; font-weight: 500; cursor: pointer; background: var(--white);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: 'DM Sans', sans-serif; transition: border-color 0.2s;
+  }
+  .social-btn:hover { border-color: var(--orange); }
+
+  /* FOOTER */
+  footer {
+    background: var(--black); color: #777; padding: 60px 40px 30px;
+  }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+  .footer-brand .logo { font-size: 22px; margin-bottom: 16px; display: block; cursor: default; }
+  .footer-brand p { font-size: 14px; line-height: 1.8; color: #666; }
+  footer h5 { font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #aaa; margin-bottom: 16px; }
+  footer a { font-size: 14px; color: #666; display: block; margin-bottom: 10px; cursor: pointer; text-decoration: none; transition: color 0.2s; }
+  footer a:hover { color: var(--orange); }
+  .footer-bottom { border-top: 1px solid #222; padding-top: 24px; display: flex; justify-content: space-between; font-size: 13px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 999;
+    background: var(--black); color: var(--white);
+    padding: 14px 20px; border-radius: 10px;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; font-weight: 500; border-left: 3px solid var(--orange);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    transform: translateY(80px); opacity: 0;
+    transition: all 0.35s cubic-bezier(.34,1.56,.64,1);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast-icon { font-size: 18px; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.7); align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white); border-radius: 16px; padding: 40px;
+    max-width: 480px; width: 90%; position: relative;
+  }
+  .modal-close {
+    position: absolute; top: 16px; right: 16px;
+    background: none; border: none; font-size: 24px; cursor: pointer; color: var(--mid);
+  }
+  .modal h3 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .modal p { color: var(--mid); font-size: 14px; margin-bottom: 24px; }
+  .modal-product-img { font-size: 64px; text-align: center; background: var(--light); border-radius: 12px; padding: 24px; margin-bottom: 24px; overflow: hidden; }
+  /* ── MODAL PRODUCT IMAGE ──
+     The modal shows a larger view of the product.
+     Pulled from the same `img` property in the PRODUCTS array.
+     Recommended size: 400x300px or any landscape crop. */
+  .modal-product-img img {
+    width: 100%; height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+  }
+  .modal-price { font-size: 28px; font-weight: 800; color: var(--orange); margin-bottom: 20px; }
+  .modal-features { margin-bottom: 24px; }
+  .modal-feature { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--mid); margin-bottom: 8px; }
+  .check { color: var(--success); font-size: 16px; }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="logo" onclick="showPage('home')">
+    <!-- LOGO IMAGE: Replace src="" with your logo file path or URL. Remove this <img> if you want text-only logo. -->
+    <img class="logo-img" src="logo.png" alt="ImpactPro Logo">
+    Impact<span>Pro</span> Tools
+  </div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="showPage('home')">Home</button>
+    <button class="nav-link" onclick="showPage('products')">Products</button>
+    <button class="nav-link" onclick="showPage('about')">About Us</button>
+  </div>
+  <div class="nav-right">
+    <button class="login-btn" onclick="showPage('login')">Sign In</button>
+  </div>
+</nav>
+
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-content">
+      <span class="hero-tag">Professional Grade Tools</span>
+      <h1>Built for <em>Impact.</em> Made to Last.</h1>
+      <p>ImpactPro Tools delivers industrial-grade equipment for professionals and DIY enthusiasts who demand reliability, precision, and performance on every job.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="showPage('products')">Shop Now</button>
+        <button class="btn-outline" onclick="showPage('about')">Our Story</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="tool-showcase">
+        <!-- HERO IMAGE: Replace src="" with your hero/banner image path or URL. Recommended: square image ~340x340px. -->
+        <img class="tool-showcase-img" src="logo.png" alt="ImpactPro Hero Tool">
+      </div>
+
+    </div>
+  </div>
+
+  <div class="why-section">
+    <div class="why-left">
+      <span class="section-tag">Why ImpactPro</span>
+      <h2>Built for <em>Real</em> Work.</h2>
+      <p>Every impact wrench we carry is selected for one reason — performance under pressure. We stock tools that professionals actually use, not just what looks good on a shelf.</p>
+      <div class="why-stat">
+        <div class="why-stat-item">
+          <div class="why-stat-num">550+</div>
+          <div class="why-stat-label">Nm Max Torque</div>
+        </div>
+        <div class="why-stat-item">
+          <div class="why-stat-num">6</div>
+          <div class="why-stat-label">Models Available</div>
+        </div>
+      </div>
+    </div>
+    <div class="why-right">
+      <div class="why-card">
+        <div class="why-card-icon">⚡</div>
+        <div class="why-card-body">
+          <h4>Industrial-Grade Power</h4>
+          <p>Our wrenches deliver maximum torque and consistent output even under the heaviest professional workloads.</p>
+        </div>
+      </div>
+      <div class="why-card">
+        <div class="why-card-icon">🔩</div>
+        <div class="why-card-body">
+          <h4>Every Drive Size Covered</h4>
+          <p>From compact 3/8" to heavy-duty 3/4" — we have the right wrench for automotive, construction, and industrial jobs.</p>
+        </div>
+      </div>
+      <div class="why-card">
+        <div class="why-card-icon">🛍️</div>
+        <div class="why-card-body">
+          <h4>Shop Directly on Shopee</h4>
+          <p>Each product links straight to Shopee for fast, trusted purchasing with buyer protection and easy checkout.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-bottom">
+      <span>© 2026 ImpactPro Tools. All rights reserved.</span>
+      <span>Privacy Policy · Terms of Service</span>
+    </div>
+  </footer>
+</div>
+
+<!-- PRODUCTS PAGE -->
+<div class="page" id="page-products">
+  <div class="products-header">
+    <h1>Impact Wrenches</h1>
+    <p>Professional-grade impact wrenches for every job size.</p>
+  </div>
+  <div class="products-layout">
+    <div class="products-main">
+      <div class="products-toolbar">
+        <span class="products-count" id="productsCount">Showing 6 impact wrenches</span>
+      </div>
+      <div class="products-grid" id="allProducts"></div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-bottom" style="border-top: none; padding-top: 0; padding: 24px 0;">
+      <span>© 2026 ImpactPro Tools. All rights reserved.</span>
+      <span>Privacy Policy · Terms of Service</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ABOUT PAGE -->
+<div class="page" id="page-about">
+  <div class="about-hero">
+    <div>
+      <h1>We Build Tools for <em>Real Work.</em></h1>
+      <p>ImpactPro was born from a simple belief: professionals deserve better. Today we serve over 50,000 customers across the Philippines and Southeast Asia.</p>
+    </div>
+
+  </div>
+
+  <div class="banner">
+    <div class="banner-text">
+      <h2>Ready to Work with the Best?</h2>
+      <p>Browse our full catalog of professional-grade tools.</p>
+    </div>
+    <button class="btn-primary" onclick="showPage('products')">Shop Products →</button>
+  </div>
+
+  <footer>
+    <div class="footer-bottom" style="border-top: none; padding: 24px 0;">
+      <span>© 2026 ImpactPro Tools. All rights reserved.</span>
+      <span>Privacy Policy · Terms of Service</span>
+    </div>
+  </footer>
+</div>
+
+<!-- LOGIN PAGE -->
+<div class="page" id="page-login">
+  <div class="login-page">
+    <div class="login-wrapper">
+      <div class="login-left">
+        <div class="logo">
+          <!-- LOGO IMAGE (Login Page): Same logo as nav. Replace src="" with your logo file path or URL. -->
+          <img class="logo-img" src="logo.png" alt="ImpactPro Logo">
+          Impact<span>Pro</span> Tools
+        </div>
+        <h2>Your Pro Account <em>Awaits.</em></h2>
+        <p>Sign in to access exclusive deals, track your orders, and manage your professional account.</p>
+        <div class="login-perk"><div class="perk-dot"></div> Priority shipping and free returns</div>
+        <div class="login-perk"><div class="perk-dot"></div> Access to exclusive pro-only products</div>
+        <div class="login-perk"><div class="perk-dot"></div> Dedicated account manager support</div>
+      </div>
+      <div class="login-right">
+        <div class="login-tabs">
+          <button class="login-tab active" onclick="switchTab('signin')">Sign In</button>
+          <button class="login-tab" onclick="switchTab('register')">Create Account</button>
+        </div>
+
+        <!-- SIGN IN FORM -->
+        <div class="login-form active" id="form-signin">
+          <div class="form-group">
+            <label>Email Address</label>
+            <input class="form-input" type="email" placeholder="you@example.com">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input class="form-input" type="password" placeholder="Enter your password">
+            <div class="forgot">Forgot password?</div>
+          </div>
+          <button class="form-submit" onclick="handleLogin()">Sign In to ImpactPro</button>
+          <div class="form-divider">or continue with</div>
+          <div class="social-btns">
+            <button class="social-btn">🔵 Google</button>
+            <button class="social-btn">🔷 Facebook</button>
+          </div>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div class="login-form" id="form-register">
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name</label>
+              <input class="form-input" type="text" placeholder="Juan">
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input class="form-input" type="text" placeholder="Dela Cruz">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input class="form-input" type="email" placeholder="you@example.com">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input class="form-input" type="password" placeholder="Create a password">
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input class="form-input" type="tel" placeholder="+63 9XX XXX XXXX">
+          </div>
+          <button class="form-submit" onclick="handleRegister()">Create My Account</button>
+          <div class="form-divider">or sign up with</div>
+          <div class="social-btns">
+            <button class="social-btn">🔵 Google</button>
+            <button class="social-btn">🔷 Facebook</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon">✅</span>
+  <span id="toastMsg">Item added to cart!</span>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="productModal" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('productModal').classList.remove('open')">×</button>
+    <div class="modal-product-img" id="modalEmoji">🔧</div>
+    <h3 id="modalName">Product Name</h3>
+    <p id="modalDesc">Product description here.</p>
+    <div class="modal-price" id="modalPrice">₱0</div>
+    <div class="modal-features">
+      <div class="modal-feature"><span class="check">✓</span> Professional grade construction</div>
+      <div class="modal-feature"><span class="check">✓</span> 5-year manufacturer warranty</div>
+      <div class="modal-feature"><span class="check">✓</span> Ergonomic grip design</div>
+      <div class="modal-feature"><span class="check">✓</span> Free shipping on this item</div>
+    </div>
+    <a class="form-submit" id="modalCartBtn" href="#" target="_blank" style="display:block;text-align:center;text-decoration:none;" onclick="this.href=SHOPEE_LINKS[modalProduct.id]||'https://shopee.ph/search?keyword=impact+wrench'">🛍 Buy on Shopee</a>
+  </div>
+</div>
+
+<script>
+const PRODUCTS = [
+  // PRODUCT IMAGES: Add your image path or URL to the `img` property of each product.
+  // Recommended size: 400x200px (landscape). Leave as empty string "" to show a fallback emoji.
+  { id:1, name:'MaxTorque Impact Wrench 1/2"', brand:'MaxForce', cat:'Impact Wrenches', price:8299, old:9500, rating:4.7, reviews:185, emoji:'', img:'Product1.png', badge:'Best Seller', desc:'1/2 inch impact wrench delivering 550 Nm of max torque for heavy-duty fastening.' },
+  { id:2, name:'ImpactPro X1 Cordless Wrench', brand:'ImpactPro', cat:'Impact Wrenches', price:9499, old:11000, rating:4.8, reviews:243, emoji:'', img:'Product2.png', badge:'Top Rated', desc:'Brushless cordless impact wrench with 680 Nm torque and 4-speed control.' },
+  { id:3, name:'ProDrive 3/4" Impact Wrench', brand:'MaxForce', cat:'Impact Wrenches', price:12500, old:14000, rating:4.6, reviews:98, emoji:'', img:'Product3.png', badge:'', desc:'Heavy-duty 3/4 inch drive impact wrench for truck and industrial applications.' },
+  { id:4, name:'ToolMaster TW-500 Wrench', brand:'ToolMaster', cat:'Impact Wrenches', price:6799, old:7800, rating:4.5, reviews:134, emoji:'', img:'Product4.png', badge:'Sale', desc:'Compact 1/2 inch impact wrench with 500 Nm torque, ideal for automotive use.' },
+  { id:5, name:'ImpactPro Mini 3/8" Wrench', brand:'ImpactPro', cat:'Impact Wrenches', price:4999, old:5800, rating:4.7, reviews:310, emoji:'', img:'Product5.png', badge:'', desc:'Lightweight 3/8 inch impact wrench perfect for tight spaces and overhead work.' },
+  { id:6, name:'MaxForce Air Impact Wrench', brand:'MaxForce', cat:'Impact Wrenches', price:5299, old:6200, rating:4.6, reviews:177, emoji:'', img:'Product6.png', badge:'', desc:'Pneumatic 1/2 inch air impact wrench with 610 Nm torque and ergonomic grip.' },
+];
+
+let modalProduct = null;
+
+const SHOPEE_LINKS = {
+  1: 'https://shopee.ph/search?keyword=maxtorque+impact+wrench+550nm',
+  2: 'https://shopee.ph/search?keyword=impactpro+cordless+impact+wrench',
+  3: 'https://shopee.ph/search?keyword=3/4+inch+impact+wrench+heavy+duty',
+  4: 'https://shopee.ph/search?keyword=toolmaster+impact+wrench+500nm',
+  5: 'https://shopee.ph/search?keyword=3/8+inch+mini+impact+wrench',
+  6: 'https://shopee.ph/search?keyword=air+impact+wrench+pneumatic+1/2',
+};
+
+function renderProducts(container, products) {
+  container.innerHTML = products.map(p => `
+    <div class="product-card" onclick="openModal(${p.id})">
+      <div class="product-img">
+        ${p.badge ? `<div class="product-badge">${p.badge}</div>` : ''}
+        ${p.img
+          ? `<img class="product-card-img" src="${p.img}" alt="${p.name}">`
+          : `<span style="font-size:72px">${p.emoji}</span>`
+        }
+      </div>
+      <div class="product-info">
+        <div class="product-brand">${p.brand}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-footer">
+          <div class="product-price">
+            ₱${p.price.toLocaleString()}
+            ${p.old ? `<span class="old">₱${p.old.toLocaleString()}</span>` : ''}
+          </div>
+          <a class="shopee-btn" href="${SHOPEE_LINKS[p.id] || 'https://shopee.ph/search?keyword=impact+wrench'}" target="_blank" onclick="event.stopPropagation()">🛍 Shopee</a>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+renderProducts(document.getElementById('allProducts'), PRODUCTS);
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function openModal(id) {
+  modalProduct = PRODUCTS.find(x => x.id === id);
+  const imgEl = document.getElementById('modalEmoji');
+  if (modalProduct.img) {
+    imgEl.innerHTML = `<img src="${modalProduct.img}" alt="${modalProduct.name}" style="width:100%;height:200px;object-fit:cover;border-radius:8px;display:block;">`;
+  } else {
+    imgEl.textContent = modalProduct.emoji;
+  }
+  document.getElementById('modalName').textContent = modalProduct.name;
+  document.getElementById('modalDesc').textContent = modalProduct.desc;
+  document.getElementById('modalPrice').textContent = '₱' + modalProduct.price.toLocaleString();
+  document.getElementById('productModal').classList.add('open');
+}
+function closeModal(e) {
+  if (e.target === document.getElementById('productModal'))
+    document.getElementById('productModal').classList.remove('open');
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  const idx = {home:0, products:1, about:2};
+  if (idx[name] !== undefined) document.querySelectorAll('.nav-link')[idx[name]].classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.login-tab').forEach((t,i) => {
+    t.classList.toggle('active', (i===0 && tab==='signin') || (i===1 && tab==='register'));
+  });
+  document.getElementById('form-signin').classList.toggle('active', tab === 'signin');
+  document.getElementById('form-register').classList.toggle('active', tab === 'register');
+}
+
+function handleLogin() {
+  showToast('👋 Welcome back to ImpactPro!');
+  setTimeout(() => showPage('home'), 1000);
+}
+function handleRegister() {
+  showToast('🎉 Account created! Welcome to ImpactPro!');
+  setTimeout(() => showPage('home'), 1000);
+}
+</script>
+</body>
+</html>
